@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore the .env file if it exists
+.env
+
+# Ignore the .vscode directory if it exists
+.vscode/
+
+frontend/node_modules/
+
