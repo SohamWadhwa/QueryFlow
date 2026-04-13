@@ -2,17 +2,12 @@ from routes.db_routes import get_db_path
 import os
 import sqlite3
 
-# How long SQLite will wait to acquire a write lock before raising
-# OperationalError("database is locked"). Default is 5 s which is too short
-# when an Ollama call + approve round-trip takes time.
 SQLITE_TIMEOUT = 30  # seconds
 
 
 def use_db(db_name: str) -> sqlite3.Connection:
     path = get_db_path(db_name)
     if not os.path.exists(path):
-        # Raise so callers get a clear exception, not a silent dict that
-        # causes an AttributeError when .cursor() is called on it.
         raise Exception(f"Database '{db_name}' does not exist")
     return sqlite3.connect(path, check_same_thread=False, timeout=SQLITE_TIMEOUT)
 

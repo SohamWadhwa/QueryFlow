@@ -4,8 +4,6 @@ from config.config import settings
 API_URL = settings.API_URL
 MODEL_NAME = settings.MODEL_NAME
 
-# Generous but bounded: local LLMs can be slow, but an infinite wait means
-# one hung Ollama call blocks the next generate forever.
 OLLAMA_TIMEOUT = 60  # seconds
 
 
@@ -32,5 +30,4 @@ def call_model(prompt: str) -> str:
     if "response" not in data:
         raise Exception(f"Unexpected Ollama response shape: {data}")
 
-    # LLMs occasionally wrap output in whitespace or newlines; strip it.
     return data["response"].strip()

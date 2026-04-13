@@ -97,36 +97,32 @@ def get_schema(req: DBRequest):
 
     schema = []
     for (table,) in tables:
-        # ── Column basics: cid, name, type, notnull, dflt_value, pk ──────────
         cursor.execute(f"PRAGMA table_info('{table}')")
         col_rows = cursor.fetchall()
 
-        # ── Foreign keys: seq, id, table, from, to, on_update, on_delete ─────
         cursor.execute(f"PRAGMA foreign_key_list('{table}')")
         fk_rows = cursor.fetchall()
         # map  from_col  →  { table, column }
         fk_map = {row[3]: {"table": row[2], "column": row[4]} for row in fk_rows}
 
-        # ── Unique columns (from non-PK unique indexes) ───────────────────────
         cursor.execute(f"PRAGMA index_list('{table}')")
         idx_list = cursor.fetchall()
         unique_cols = set()
         for idx in idx_list:
             idx_name, is_unique, origin = idx[1], idx[2], idx[3]
-            # origin 'pk' is already captured via table_info; skip it
+        
             if is_unique and origin != "pk":
                 cursor.execute(f"PRAGMA index_info('{idx_name}')")
                 for info_row in cursor.fetchall():
-                    unique_cols.add(info_row[2])  # column name
+                    unique_cols.add(info_row[2])  
 
         columns = []
         for c in col_rows:
-            # c = (cid, name, type, notnull, dflt_value, pk)
             col_name = c[1]
             constraints = []
-            if c[5]:                          # pk > 0  →  PRIMARY KEY
+            if c[5]:                          
                 constraints.append("PRIMARY KEY")
-            if c[3]:                          # notnull = 1
+            if c[3]:                          
                 constraints.append("NOT NULL")
             if col_name in unique_cols:
                 constraints.append("UNIQUE")
@@ -141,8 +137,8 @@ def get_schema(req: DBRequest):
                 "not_null":      bool(c[3]),
                 "default_value": c[4],
                 "unique":        col_name in unique_cols,
-                "foreign_key":   fk_map.get(col_name),   # None or {table, column}
-                "constraints":   constraints,             # human-readable list
+                "foreign_key":   fk_map.get(col_name),   
+                "constraints":   constraints,             
             })
 
         schema.append({
@@ -174,8 +170,6 @@ def get_schema_for_model(req: DBRequest):
     cursor = conn.cursor()
 
     try:
-        # Fetch actual CREATE TABLE statements for all user tables.
-        # This is the most token-efficient and unambiguous format for an LLM to read.
         cursor.execute("SELECT name, sql FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
         tables = cursor.fetchall()
         
@@ -190,8 +184,8 @@ def get_schema_for_model(req: DBRequest):
         return {
             "success": True,
             "db_name": db_name,
-            "schema": schema, # Can still be passed as JSON objects if needed
-            "schema_text": "\n\n".join(schema_text_parts) # Perfect format for LLM context injection
+            "schema": schema, 
+            "schema_text": "\n\n".join(schema_text_parts) 
         }
     finally:
         conn.close()
@@ -225,7 +219,7 @@ def get_all_tables(req: DBRequest):
                 "columns":      columns,
                 "rows":         [dict(zip(columns, row)) for row in rows],
                 "total_shown":  len(rows),
-                "capped":       len(rows) == 50,   # true means there may be more rows
+                "capped":       len(rows) == 50,   
             })
     finally:
         conn.close()

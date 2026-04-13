@@ -16,7 +16,7 @@ import {
   LayoutList,
 } from "lucide-react";
 import { QueryResultPanel, QueryResult } from "./QueryResultPanel";
-import { AllTablesPanel } from "./Alltablespanel";
+import { AllTablesPanel } from "./AllTablesPanel";
 import api from "@/lib/api";
 
 interface PromptWorkspaceProps {

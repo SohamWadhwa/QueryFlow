@@ -71,11 +71,11 @@ def reject_query(query_id: str):
 def generate_query(req: QueryRequest):
     if not is_valid_name(req.db_name):
         raise HTTPException(400, "Invalid database name")
-    # print(req.db_name, req.user_query)
+
     try:
         sql_query = generate_sql(req.db_name, req.user_query)
         query_id = store_pending_query(req.db_name, sql_query)
-        #print(sql_query)
+
     except Exception as e:
         raise HTTPException(500, str(e))
 
