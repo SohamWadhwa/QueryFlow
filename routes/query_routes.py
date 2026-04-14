@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 import uuid
-
+import time
 from utils.query_generator import generate_sql
 from utils.database import run_query
 from root_db import get_root_db_connection
@@ -73,7 +73,10 @@ def generate_query(req: QueryRequest):
         raise HTTPException(400, "Invalid database name")
 
     try:
+        start = time.perf_counter()
         sql_query = generate_sql(req.db_name, req.user_query)
+        end = time.perf_counter()
+        print(f"Generated SQL in {end - start:.2f} seconds")
         query_id = store_pending_query(req.db_name, sql_query)
 
     except Exception as e:

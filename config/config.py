@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     DB_DIR: str
     API_URL: str
     MODEL_NAME: str
+    OLLAMA_API_KEY: str
 
     class Config:
         env_file = ".env"

@@ -197,7 +197,7 @@ export function AppSidebar({
         </div>
 
         {/* Footer */}
-        <div className="p-3 border-t border-sidebar-border">
+        {/* <div className="p-3 border-t border-sidebar-border">
           <div className="flex items-center gap-2.5">
             <div className="h-8 w-8 rounded-full bg-sidebar-active flex items-center justify-center text-primary-foreground text-xs font-semibold">
               U
@@ -207,7 +207,7 @@ export function AppSidebar({
               <p className="text-[11px] text-sidebar-muted truncate">Free plan</p>
             </div>
           </div>
-        </div>
+        </div> */}
       </aside>
 
       {/* CREATE MODAL */}
