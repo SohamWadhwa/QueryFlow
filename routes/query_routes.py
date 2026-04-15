@@ -22,7 +22,7 @@ def store_pending_query(db_name: str, sql_query: str):
     query_id = str(uuid.uuid4())
     try:
         cursor.execute(
-            "INSERT INTO pending_queries (id, db_name, sql, status) VALUES (?, ?, ?, ?)",
+            "INSERT INTO pending_queries (id, db_name, `sql`, status) VALUES (%s, %s, %s, %s)",
             (query_id, db_name, sql_query, "pending")
         )
         
@@ -37,7 +37,10 @@ def approve_query(query_id: str):
     try:
         cursor = conn.cursor()
 
-        cursor.execute("SELECT db_name, sql FROM pending_queries WHERE id = ? AND status = 'pending'", (query_id,))
+        cursor.execute(
+            "SELECT db_name, `sql` FROM pending_queries WHERE id = %s AND status = 'pending'",
+            (query_id,)
+        )
         row = cursor.fetchone()
 
         if not row:
@@ -48,7 +51,10 @@ def approve_query(query_id: str):
         # run_query may raise — conn must still be closed, hence the try/finally
         result = run_query(db_name, sql)
 
-        cursor.execute("UPDATE pending_queries SET status = 'approved' WHERE id = ?", (query_id,))
+        cursor.execute(
+            "UPDATE pending_queries SET status = 'approved' WHERE id = %s",
+            (query_id,)
+        )
         conn.commit()
     finally:
         conn.close()
@@ -60,7 +66,7 @@ def reject_query(query_id: str):
     try:
         cursor = conn.cursor()
         cursor.execute(
-            "UPDATE pending_queries SET status='rejected' WHERE id=?",
+            "UPDATE pending_queries SET status='rejected' WHERE id=%s",
             (query_id,)
         )
         conn.commit()
@@ -101,7 +107,7 @@ def edit(query_id: str, new_sql: str):
     try:
         cursor = conn.cursor()
         cursor.execute(
-            "UPDATE pending_queries SET sql=?, status='pending' WHERE id=?",
+            "UPDATE pending_queries SET `sql`=%s, status='pending' WHERE id=%s",
             (new_sql, query_id)
         )
         conn.commit()

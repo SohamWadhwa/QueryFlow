@@ -95,6 +95,7 @@ export function PromptWorkspace({ sidebarCollapsed, onToggleSidebar, selectedDb 
       setSchemaError(null);
       try {
         const res = await api.post("/db/schema", { db_name: selectedDb });
+        console.log("Fetched schema:", res.data.schema);
         setSchema(res.data.schema ?? []);
       } catch (err: any) {
         setSchemaError(err?.response?.data?.detail ?? "Failed to load schema.");
@@ -458,7 +459,7 @@ export function PromptWorkspace({ sidebarCollapsed, onToggleSidebar, selectedDb 
                             <span className="font-mono text-xs font-medium text-foreground truncate">{col.name}</span>
                             <span className="ml-auto font-mono text-[10px] text-primary/80 bg-primary/8 px-1.5 py-0.5 rounded flex-shrink-0">{col.type}</span>
                           </div>
-                          {col.constraints.length > 0 && (
+                          {(col.constraints ?? []).length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-1.5 pl-5">
                               {col.primary_key && <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">PK</span>}
                               {col.not_null && !col.primary_key && <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">NOT NULL</span>}

@@ -1,35 +1,26 @@
-import sqlite3
-import os
-
-ROOT_DB = os.path.join(
-    "databases",
-    "root_backend.db"
-)
+from utils.mysql_client import get_connection
 
 def get_root_db_connection():
-    return sqlite3.connect(ROOT_DB, timeout=10, check_same_thread=False)
-
+    return get_connection()
 
 def initialize_root_db():
+    conn = get_root_db_connection()
+    cursor = conn.cursor()
     try:
-        conn = get_root_db_connection()
-        cursor = conn.cursor()
-
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS pending_queries (
-            id TEXT PRIMARY KEY,
-            db_name TEXT NOT NULL,
-            sql TEXT NOT NULL,
-            status TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
+            CREATE TABLE IF NOT EXISTS pending_queries (
+                id VARCHAR(36) PRIMARY KEY,
+                db_name VARCHAR(255) NOT NULL,
+                `sql` TEXT NOT NULL,
+                status VARCHAR(50) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
         """)
-
-        cursor.execute("""
-        CREATE INDEX IF NOT EXISTS idx_status 
-        ON pending_queries(status);
-        """)
-
+        # cursor.execute("""
+        #     CREATE INDEX idx_status 
+        #     ON pending_queries(status);
+        # """)
         conn.commit()
     finally:
+        cursor.close()
         conn.close()

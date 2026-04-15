@@ -27,19 +27,17 @@ def generate_sql(db_name: str, user_query: str):
     # """
     prompt = f"""
 ### System:
-You are a specialized SQLite SQL generator. You provide ONLY the raw SQL code.
+You are a specialized MySQL SQL generator. You provide ONLY the raw SQL code.
 
 ### Schema:
 {schema_data}
 
 ### Rules:
-1. Output MUST be in valid SQLite3 syntax.
-2. Output ONLY the SQL string. Do NOT use markdown code blocks (no ```sql).
+1. Output MUST be valid MySQL syntax.
+2. Output ONLY the SQL string. Do NOT use markdown code blocks.
 3. Do NOT provide explanations, comments, or introductory text.
-4. IDENTIFIER QUOTING: If a table or column name contains spaces or is a reserved word, wrap it in square brackets [like_this].
-5. Ensure the query is executable directly that is single line.
-6. Do not include any escape characters or newlines in the output.
-7. Always use lowercase for instance names (e.g., table and column names) in the output SQL.
+4. Use backticks for identifiers: `table_name`, `column_name`
+5. Ensure the query is a single executable line.
 
 ### User Query:
 {user_query}
