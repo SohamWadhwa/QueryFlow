@@ -11,7 +11,7 @@ def use_db(db_name: str):
     return conn
 
 def is_select(sql: str) -> bool:
-    return sql.strip().lower().startswith(("select", "with"))
+    return sql.strip().lower().startswith(("select", "with", "show"))
 
 def run_query(db_name: str, sql: str):
     conn = use_db(db_name)
