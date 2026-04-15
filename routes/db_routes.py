@@ -73,7 +73,7 @@ def get_schema(req: DBRequest):
     return {"success": True, "db_name": req.db_name, "schema": schema}
 
 def get_db_path(db_name: str):
-    return db_name  # no longer a file path, just the DB name
+    return db_name  
 
 def get_schema_for_model(req: DBRequest):
     if not is_valid_name(req.db_name):

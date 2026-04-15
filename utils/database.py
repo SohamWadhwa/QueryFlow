@@ -5,7 +5,7 @@ def use_db(db_name: str):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{db_name}`")
-    cursor.fetchall()  # ← fix 1: consume implicit result before switching DB
+    cursor.fetchall()  
     cursor.close()
     conn.database = db_name
     return conn
@@ -22,7 +22,7 @@ def run_query(db_name: str, sql: str):
         if is_select(sql):
             result = cursor.fetchall()
         else:
-            cursor.fetchall()  # ← fix 2: consume any implicit result before commit
+            cursor.fetchall()  
             conn.commit()
             result = {"message": "Query executed successfully"}
 

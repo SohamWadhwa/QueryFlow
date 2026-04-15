@@ -70,7 +70,7 @@ def call_model(prompt: str) -> str:
         response = _client.chat.completions.create(
             model=settings.MODEL_NAME,
             messages=[{"role": "user", "content": prompt}],
-            temperature=0,  # deterministic SQL output
+            temperature=0,  
         )
     except APITimeoutError:
         raise Exception("Groq timed out. Please try again.")

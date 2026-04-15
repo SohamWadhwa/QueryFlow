@@ -8,5 +8,5 @@ def get_connection():
         user=settings.AIVEN_USER,
         password=settings.AIVEN_PASSWORD,
         database=settings.AIVEN_DATABASE,
-        ssl_disabled=False,  # Aiven requires SSL
+        ssl_disabled=False,  
     )
