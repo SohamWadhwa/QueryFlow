@@ -5,3 +5,4 @@ pydantic-settings
 requests
 ollama
 mysql-connector-python
+groq
