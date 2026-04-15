@@ -4,10 +4,10 @@ import mysql.connector
 def use_db(db_name: str):
     conn = get_connection()
     cursor = conn.cursor()
-    # Each user DB is a separate MySQL schema
     cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{db_name}`")
-    conn.database = db_name
+    cursor.fetchall()  # ← fix 1: consume implicit result before switching DB
     cursor.close()
+    conn.database = db_name
     return conn
 
 def is_select(sql: str) -> bool:
@@ -22,12 +22,15 @@ def run_query(db_name: str, sql: str):
         if is_select(sql):
             result = cursor.fetchall()
         else:
+            cursor.fetchall()  # ← fix 2: consume any implicit result before commit
             conn.commit()
             result = {"message": "Query executed successfully"}
 
     except mysql.connector.Error as e:
+        conn.rollback()
         raise Exception(f"SQL execution failed: {str(e)}")
     finally:
+        cursor.close()
         conn.close()
 
     return result

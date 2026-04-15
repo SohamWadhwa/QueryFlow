@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     API_URL: str
     MODEL_NAME: str
     OLLAMA_API_KEY: str
+    GROQ_API_KEY: str
 
     class Config:
         env_file = ".env"

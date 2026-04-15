@@ -32,30 +32,55 @@
 
 #     return data["response"].strip()
 
-import os
-from ollama import Client, ResponseError
+# import os
+# from ollama import Client, ResponseError
+# from config.config import settings
+
+# _client = Client(
+#     host="https://ollama.com",
+#     headers={"Authorization": "Bearer " + settings.OLLAMA_API_KEY},
+# )
+
+
+# def call_model(prompt: str) -> str:
+#     try:
+#         response = _client.chat(
+#             model=settings.MODEL_NAME,
+#             messages=[{"role": "user", "content": prompt}],
+#             stream=False,
+#         )
+#     except ResponseError as e:
+#         raise Exception(f"Ollama cloud error {e.status_code}: {e.error}")
+#     except Exception as e:
+#         raise Exception(f"Ollama request failed: {str(e)}")
+
+#     content = response.message.content
+#     if not content:
+#         raise Exception("Empty response from Ollama cloud.")
+
+#     return content.strip()
+
+from groq import Groq, APITimeoutError, APIConnectionError, APIStatusError
 from config.config import settings
 
-_client = Client(
-    host="https://ollama.com",
-    headers={"Authorization": "Bearer " + settings.OLLAMA_API_KEY},
-)
-
+_client = Groq(api_key=settings.GROQ_API_KEY)
 
 def call_model(prompt: str) -> str:
     try:
-        response = _client.chat(
+        response = _client.chat.completions.create(
             model=settings.MODEL_NAME,
             messages=[{"role": "user", "content": prompt}],
-            stream=False,
+            temperature=0,  # deterministic SQL output
         )
-    except ResponseError as e:
-        raise Exception(f"Ollama cloud error {e.status_code}: {e.error}")
-    except Exception as e:
-        raise Exception(f"Ollama request failed: {str(e)}")
+    except APITimeoutError:
+        raise Exception("Groq timed out. Please try again.")
+    except APIConnectionError:
+        raise Exception("Cannot reach Groq API. Check your network.")
+    except APIStatusError as e:
+        raise Exception(f"Groq error {e.status_code}: {e.message}")
 
-    content = response.message.content
+    content = response.choices[0].message.content
     if not content:
-        raise Exception("Empty response from Ollama cloud.")
+        raise Exception("Empty response from Groq.")
 
     return content.strip()
