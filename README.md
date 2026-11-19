@@ -1,8 +1,10 @@
 # QueryFlow
 
-QueryFlow turns plain-English questions into MySQL queries and runs them only after you approve. It pairs a FastAPI backend with a React and TypeScript frontend, and uses the Groq API to generate SQL from your database schema.
+QueryFlow is a database app where you fetch data using plain English only. You ask a question, an LLM translates it into SQL against your database's real schema, and you get the results back without writing a line of SQL.
 
-The intended use is exploring and querying MySQL databases without writing SQL by hand, while keeping a human in the loop: every generated query is stored as pending, and you can approve, edit, or reject it before anything touches your data.
+The goal is a single natural-language interface that scales across different databases, so anyone can get answers from their data regardless of the engine behind it. Today it supports MySQL, with a FastAPI backend, a React and TypeScript frontend, and the Groq API for SQL generation. Support for additional databases is the main direction of the project (see the roadmap).
+
+A human stays in the loop: every generated query is stored as pending, and you can approve, edit, or reject it before it runs.
 
 ## Features
 
@@ -130,10 +132,13 @@ Do not point it at a database you cannot afford to lose.
 
 ## Roadmap
 
-- Read-only SQL validation with a row limit
-- Backend test suite with the LLM and MySQL mocked
+- Multi-database support behind a common adapter interface (PostgreSQL, SQLite, and others), with dialect-aware SQL generation and schema introspection per engine
+- Connect your own database by connection string instead of a single configured server
+- Read-only, plain-English data fetching: SQL validation that allows only safe `SELECT` queries, with a row limit
+- Schema-aware prompting that scales to large databases (relevant tables only, column descriptions)
+- Backend test suite with the LLM and databases mocked
 - Authentication and stricter CORS
-- Query history and schema-aware prompting improvements
+- Query history and saved questions
 
 ## License
 
